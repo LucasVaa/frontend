@@ -18,6 +18,9 @@
                     v-model="loginForm.password"
                     required
                 />
+                <p v-if="errorMessage" class="error-message">
+                    {{ errorMessage }}
+                </p>
             </div>
             <button type="submit">登录</button>
         </form>
@@ -25,6 +28,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
     name: "Login",
     data() {
@@ -33,14 +37,41 @@ export default {
                 username: "",
                 password: "",
             },
+            errorMessage: "",
         };
     },
     methods: {
+        isValidPassword(password) {
+            const regex =
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/;
+            return regex.test(password);
+        },
         submitForm() {
-            // 在这里处理登录逻辑，例如发送请求到服务器
-            console.log("登录信息:", this.loginForm);
-            // 发送登录信息到服务器...
-            this.$router.push('/home');
+            var that = this;
+            if (this.isValidPassword(this.loginForm.password)) {
+                axios
+                    .get("/api/user/login", {
+                        params: {
+                            userName: this.loginForm.username,
+                            password: this.loginForm.password,
+                        },
+                    })
+                    .then(function (response) {
+                        if (response.data.status == 1) {
+                            that.$store.commit("login");
+                            that.$router.push("/home");
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
+                    .finally(function () {
+                        // 总是会执行
+                    });
+            } else {
+                this.errorMessage =
+                    "密码必须包含数字、大小写字母和特殊字符，并且长度不少于10位。";
+            }
         },
     },
 };
@@ -95,5 +126,15 @@ button {
 
 button:hover {
     background-color: #003d7a;
+}
+
+.error-message {
+    color: #d32f2f;
+    background-color: #ffebee;
+    border: 1px solid #d32f2f;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-weight: bold;
 }
 </style>
