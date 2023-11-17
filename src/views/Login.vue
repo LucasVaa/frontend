@@ -3,7 +3,7 @@
         <form @submit.prevent="submitForm">
             <div class="form-group">
                 <label for="username">用户名:</label>
-                <input
+                <el-input
                     type="text"
                     id="username"
                     v-model="loginForm.username"
@@ -12,7 +12,7 @@
             </div>
             <div class="form-group">
                 <label for="password">密码:</label>
-                <input
+                <el-input
                     type="password"
                     id="password"
                     v-model="loginForm.password"
@@ -22,7 +22,7 @@
                     {{ errorMessage }}
                 </p>
             </div>
-            <button type="submit">登录</button>
+            <el-button type="primary" @click="submitForm">登录</el-button>
         </form>
     </div>
 </template>
@@ -58,7 +58,7 @@ export default {
                     })
                     .then(function (response) {
                         if (response.data.status == 1) {
-                            that.$store.commit("login");
+                            that.$store.commit("login", response.data.userId);
                             that.$router.push("/home");
                         }
                     })
@@ -90,42 +90,6 @@ export default {
 
 .form-group {
     margin-bottom: 20px;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    color: #333;
-    font-weight: bold;
-}
-
-input[type="text"],
-input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-}
-
-button {
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    background-color: #0056b3;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #003d7a;
 }
 
 .error-message {

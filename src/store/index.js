@@ -4,11 +4,13 @@ export default createStore({
     state() {
         return {
             isLoggedIn: false,
+            userId: "",
         };
     },
     mutations: {
-        login (state) {
+        login (state, userId) {
           state.isLoggedIn = true;
+          state.userId = userId;
         }
       }
 });
